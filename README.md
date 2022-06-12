@@ -7,7 +7,8 @@
 # Features 
 1. `/block-origin <x> <y> <z>` can tell you who placed the specified block
 2. `/block-origin highlight-placed` will summon particles above all player placed blocks
-**WARNING:** this feature is unstable and may lead to crashes
+
+**WARNING:** features are unstable and may lead to crashes
 
 # How it works
 All of the placement data is stored in a text file in the world folder and is read upon startup
