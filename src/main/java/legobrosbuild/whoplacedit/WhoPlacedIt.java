@@ -40,7 +40,15 @@ public class WhoPlacedIt implements ModInitializer {
         //Todo: make the particles less laggy
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> savePos(posData) ); //Unneeded
 
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> loadPos());
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            server.getWorlds().forEach(serverWorld -> {
+                if (Objects.equals(server.getWorld(serverWorld.getRegistryKey()).toString(), serverWorld.toString())){
+                    Pattern pattern = Pattern.compile("\\[(.*)\\]");
+                    Matcher worldMatch = pattern.matcher(serverWorld.toString());
+                    if (worldMatch.find()) loadPos(worldMatch.group(1));
+                }
+            });
+        });
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 
@@ -82,13 +90,13 @@ public class WhoPlacedIt implements ModInitializer {
         }
     }
 
-    public void loadPos(){
+    public void loadPos(String worldName){
         try {
 
-            File file = new File("world/who-placed-it/posData.txt");
+            File file = new File(worldName + "/who-placed-it/posData.txt");
 
             if (!file.exists()){
-                Path path = Paths.get("world/who-placed-it");
+                Path path = Paths.get(worldName + "/who-placed-it");
                 Files.createDirectories(path);
 
                 savePos(posData);
