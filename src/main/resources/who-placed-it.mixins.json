@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "legobrosbuild.whoplacedit.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": ["PlaceDetectionMixin","ParticleTickMixin"],
+  "client": [
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
