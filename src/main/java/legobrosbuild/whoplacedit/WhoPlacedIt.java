@@ -34,6 +34,7 @@ public class WhoPlacedIt implements ModInitializer {
     public static Logger LOGGER = Logger.getLogger("whoplacedit");
     public static HashMap<BlockPos, String> posData = new HashMap<>();
     public static boolean highlight_particles = false;
+    public static String worldName;
     @Override
     public void onInitialize() {
         //Todo: support fill and setblock cmds
@@ -41,11 +42,15 @@ public class WhoPlacedIt implements ModInitializer {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> savePos(posData) ); //Unneeded
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+
             server.getWorlds().forEach(serverWorld -> {
                 if (Objects.equals(server.getWorld(serverWorld.getRegistryKey()).toString(), serverWorld.toString())){
                     Pattern pattern = Pattern.compile("\\[(.*)\\]");
                     Matcher worldMatch = pattern.matcher(serverWorld.toString());
-                    if (worldMatch.find()) loadPos(worldMatch.group(1));
+                    if (worldMatch.find()) {
+                        worldName = worldMatch.group(1);
+                        loadPos(worldName);
+                    };
                 }
             });
         });
@@ -73,7 +78,7 @@ public class WhoPlacedIt implements ModInitializer {
 
     public static void savePos(HashMap<BlockPos, String> posData) {
         try {
-            FileWriter fileWriter = new FileWriter("world/who-placed-it/posData.txt");
+            FileWriter fileWriter = new FileWriter(worldName + "/who-placed-it/posData.txt");
             posData.forEach((key, value) ->{
                 try {
                     fileWriter.write(key.getX() + "," + key.getY() + "," + key.getZ() + ";" + value + "\n");

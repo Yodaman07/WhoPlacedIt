@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static legobrosbuild.whoplacedit.WhoPlacedIt.posData;
-import static legobrosbuild.whoplacedit.WhoPlacedIt.savePos;
+import static legobrosbuild.whoplacedit.WhoPlacedIt.*;
 
 @Mixin(Block.class)
 public class PlaceDetectionMixin {
@@ -22,13 +21,14 @@ public class PlaceDetectionMixin {
     @Inject(at = @At("HEAD"), method = "onPlaced")
     private void whenPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack, CallbackInfo ci) {
         posData.put(pos, placer.getEntityName());
-        savePos(posData);
-        WhoPlacedIt.LOGGER.info(pos.getX() + "," + pos.getY() + "," + pos.getZ() + "; Placed by: " + placer.getEntityName());
+        if (highlight_particles) savePos(posData);
+
+//        WhoPlacedIt.LOGGER.info(pos.getX() + "," + pos.getY() + "," + pos.getZ() + "; Placed by: " + placer.getEntityName());
     }
 
     @Inject(at = @At("HEAD"), method = "onBreak")
     private void whenBroken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci){
         posData.remove(pos);
-        savePos(posData);
+        if (highlight_particles) savePos(posData);
     }
 }
